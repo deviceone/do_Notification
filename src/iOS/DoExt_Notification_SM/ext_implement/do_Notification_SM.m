@@ -12,16 +12,16 @@
 #import "doIScriptEngine.h"
 #import "doInvokeResult.h"
 #import "doUIModuleHelper.h"
-#import "doJsonNode.h"
+#import "doJsonHelper.h"
 
 @implementation do_Notification_SM
 #pragma mark -
 #pragma mark - 同步异步方法的实现
 /*
  1.参数节点
- doJsonNode *_dictParas = [parms objectAtIndex:0];
+ NSDictionary *_dictParas = [parms objectAtIndex:0];
  a.在节点中，获取对应的参数
- NSString *title = [_dictParas GetOneText:@"title" :@"" ];
+ NSString *title = [doJsonHelper GetOneText: _dictParas :@"title" :@"" ];
  说明：第一个参数为对象名，第二为默认值
  
  2.脚本运行时的引擎
@@ -48,22 +48,22 @@
 //异步
 - (void)alert:(NSArray *)parms
 {
-    doJsonNode *_dictParas = [parms objectAtIndex:0];
-    NSString *_title = [_dictParas GetOneText:@"title" :@"" ];
-    NSString *_text = [_dictParas GetOneText:@"text" :@"" ];
+    NSDictionary *_dictParas = [parms objectAtIndex:0];
+    NSString *_title = [doJsonHelper GetOneText: _dictParas :@"title" :@"" ];
+    NSString *_text = [doJsonHelper GetOneText: _dictParas :@"text" :@"" ];
     [doUIModuleHelper Alert:_title msg:_text];
     
 }
 - (void)confirm:(NSArray *)parms
 {
-    doJsonNode *_dictParas = [parms objectAtIndex:0];
+    NSDictionary *_dictParas = [parms objectAtIndex:0];
     id<doIScriptEngine> _scritEngine = [parms objectAtIndex:1];
     NSString *_callbackName = [parms objectAtIndex:2];
     
-    NSString *_title = [_dictParas GetOneText:@"title" :@"" ];
-    NSString *_text = [_dictParas GetOneText:@"text" :@"" ];
-    NSString *_button1text = [_dictParas GetOneText:@"button1text" :@"" ];
-    NSString *_button2text = [_dictParas GetOneText:@"button2text" :@"" ];
+    NSString *_title = [doJsonHelper GetOneText: _dictParas :@"title" :@"" ];
+    NSString *_text = [doJsonHelper GetOneText: _dictParas :@"text" :@"" ];
+    NSString *_button1text = [doJsonHelper GetOneText: _dictParas :@"button1text" :@"" ];
+    NSString *_button2text = [doJsonHelper GetOneText: _dictParas :@"button2text" :@"" ];
     
     if (0 == _button1text.length)
     {
@@ -82,8 +82,8 @@
 }
 - (void)toast:(NSArray *)parms
 {
-    doJsonNode *_dictParas = [parms objectAtIndex:0];
-    NSString *_text = [_dictParas GetOneText:@"text" :@"" ];
+    NSDictionary *_dictParas = [parms objectAtIndex:0];
+    NSString *_text = [doJsonHelper GetOneText: _dictParas :@"text" :@"" ];
     dispatch_async(dispatch_get_main_queue(), ^{
         CGRect _frame = [[UIScreen mainScreen]bounds];
         
@@ -136,15 +136,15 @@
 
 - (void)alertView:(doConfirmView *)confirmView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    doJsonNode *_node = [[doJsonNode alloc]init];
+    NSMutableDictionary *_node = [[NSMutableDictionary alloc]init];
     
     if (buttonIndex == confirmView.cancelButtonIndex)
     {
-        [_node SetOneInteger:@"index" :2];
+        [_node setObject:[NSNumber numberWithInt:2] forKey:@"index"];
     }
     else
     {
-        [_node SetOneInteger:@"index" :1];
+        [_node setObject:[NSNumber numberWithInt:1] forKey:@"index"];
     }
     doInvokeResult *_invokeResult = [[doInvokeResult alloc] init:nil];
     [_invokeResult SetResultNode: _node];
